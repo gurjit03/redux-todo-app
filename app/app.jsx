@@ -1,5 +1,5 @@
 var React = require('react');
-var ReactDOM = require('react-dom');  
+var ReactDOM = require('react-dom');
 var {Router, Route, IndexRoute, hashHistory} = require('react-router');
 
 // Load the foundation css for the component
@@ -13,3 +13,5 @@ ReactDOM.render(
   <h1>Final Boilerplate application</h1>,
   document.getElementById('app')
 );
+
+require('react-todo-example');

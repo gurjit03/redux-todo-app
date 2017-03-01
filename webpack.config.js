@@ -21,6 +21,11 @@ module.exports = {
   },
   resolve: {
     root : __dirname,
+    modulesDirectories : [
+      'node_modules',
+      './app/components',
+      './app/components/api'
+    ],
     alias : {
       applicationStyles : 'app/styles/app.scss',
     },
@@ -31,13 +36,13 @@ module.exports = {
       {
         loader : 'babel-loader',
         query : {
-          presets: ['react','es2015']
+          presets: ['react','es2015','es2017'],
+          plugins: ["transform-object-rest-spread"]
         },
         test : /\.jsx?$/,
         exclude: /(node_modules|bower_components)/
       }
     ]
   },
-
   devtool: 'cheap-module-eval-source-map'
 }
