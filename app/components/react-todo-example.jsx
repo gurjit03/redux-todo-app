@@ -1,30 +1,84 @@
 var redux = require('redux');
+var movieId = 1;
 
 var defaultState = {
   searchText : '',
   showCompleted : false,
-  todos : []
+  todos : [],
+  movies : []
 }
 
-var reducer = (state = defaultState,action) => {
+// Action in all the reducers will be the same object
+var searchTextReducer = (state='',action) => {
   switch(action.type) {
     case 'CHANGE_SEARCH_TEXT':
-      return {
-        ...state,
-        searchText : action.name
-      }
+      return action.searchText;
     default:
-      return state
+      return state;
   }
 }
 
-var store = redux.createStore(reducer);
+var moviesReducer = (state = [],action) => {
+  console.log('state in movies reducer',state);
+  switch(action.type) {
+    case 'ADD_MOVIE' :
+    return [
+      ...state,
+      {
+        id : movieId++,
+        title : action.title,
+        genre : action.genre
+      }
+    ]
+    case 'REMOVE_MOVIE' :
+      return [state.filter(movie => movie.id !== action.id )]
+    default:
+      return state;
+  }
+}
 
-console.log('currentState',store.getState());
+var completeReducer = (state=defaultState.showCompleted , action) => {
+  switch(action.type) {
+    case 'TOGGLE_COMPLETED':
+      return !state;
+    default:
+      return state;
+  }
+}
+
+var reducer = redux.combineReducers({
+  searchText : searchTextReducer,
+  showCompleted : completeReducer,
+  movies : moviesReducer
+})
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+))
+
+store.subscribe(() => {
+  console.log('new state',store.getState());
+})
 var actionToDispatch = {
   type : 'CHANGE_SEARCH_TEXT',
-  name : 'hello'
+  searchText : 'hello'
 }
 store.dispatch(actionToDispatch);
-console.log('------------------');
-console.log('new updated state',store.getState());
+
+store.dispatch({
+  type : 'ADD_MOVIE',
+  title : 'dabang',
+  genre : 'comedy-romance'
+})
+
+store.dispatch({
+  type : 'ADD_MOVIE',
+  title : 'After dawn',
+  genre : 'horror'
+})
+
+
+// Removing the hobby by dispatching the Action
+store.dispatch({
+  type : 'REMOVE_MOVIE',
+  id : 2
+})
