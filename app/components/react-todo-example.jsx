@@ -7,8 +7,8 @@ var defaultState = {
   todos : [],
   movies : []
 }
-
-// Action in all the reducers will be the same object
+// SearchText Reducer and action generator........
+// -----------------------------------------------
 var searchTextReducer = (state='',action) => {
   switch(action.type) {
     case 'CHANGE_SEARCH_TEXT':
@@ -18,6 +18,13 @@ var searchTextReducer = (state='',action) => {
   }
 }
 
+var changeSearchText = (searchText) => {
+  return {
+    type : 'CHANGE_SEARCH_TEXT',
+    searchText
+  }
+}
+//moviesReducer and action generator..........
 var moviesReducer = (state = [],action) => {
   console.log('state in movies reducer',state);
   switch(action.type) {
@@ -31,12 +38,27 @@ var moviesReducer = (state = [],action) => {
       }
     ]
     case 'REMOVE_MOVIE' :
-      return [state.filter(movie => movie.id !== action.id )]
+      return state.filter(movie => movie.id !== action.id )
     default:
       return state;
   }
 }
+var addMovie = (title,genre) => {
+  return {
+    type : 'ADD_MOVIE',
+    title,
+    genre
+  }
+}
 
+var removeMovie = (id) => {
+  return {
+    type : 'REMOVE_MOVIE',
+    id
+  }
+}
+// Complete Reducer and action generator .
+// -----------------------
 var completeReducer = (state=defaultState.showCompleted , action) => {
   switch(action.type) {
     case 'TOGGLE_COMPLETED':
@@ -46,11 +68,19 @@ var completeReducer = (state=defaultState.showCompleted , action) => {
   }
 }
 
+var toggleShowCompleted = (showCompleted) => {
+  return {
+    type : 'TOGGLE_SHOW_COMPLETED',
+    showCompleted : !showCompleted
+  }
+}
+
 var reducer = redux.combineReducers({
   searchText : searchTextReducer,
   showCompleted : completeReducer,
   movies : moviesReducer
 })
+
 var store = redux.createStore(reducer, redux.compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ))
@@ -58,27 +88,14 @@ var store = redux.createStore(reducer, redux.compose(
 store.subscribe(() => {
   console.log('new state',store.getState());
 })
-var actionToDispatch = {
-  type : 'CHANGE_SEARCH_TEXT',
-  searchText : 'hello'
-}
-store.dispatch(actionToDispatch);
 
-store.dispatch({
-  type : 'ADD_MOVIE',
-  title : 'dabang',
-  genre : 'comedy-romance'
-})
+// Changing the text
+store.dispatch(changeSearchText('hello'));
 
-store.dispatch({
-  type : 'ADD_MOVIE',
-  title : 'After dawn',
-  genre : 'horror'
-})
+// Adding the movie by dispatching the action
+store.dispatch(addMovie("Dhoni: The untold story","biopic"))
 
+store.dispatch(addMovie("After Dawn","horror"))
 
-// Removing the hobby by dispatching the Action
-store.dispatch({
-  type : 'REMOVE_MOVIE',
-  id : 2
-})
+// Removing the movie by dispatching the Action
+store.dispatch(removeMovie(2))
